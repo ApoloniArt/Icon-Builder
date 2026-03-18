@@ -1,0 +1,6 @@
+# Required for build command (PNG → ICO → DLL)
+pillow>=9.0.0
+
+# Required for apply command (applying icons to shortcuts via command line)
+# Not needed if you apply icons manually through Windows right-click menus
+pywin32>=305; sys_platform == "win32"
