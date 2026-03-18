@@ -355,4 +355,4 @@ The `build` command (PNG → ICO → DLL) runs on any Python 3.9+ with only Pill
 MIT
 
 ---
-##*Built with 💜 by Apolonia — to reclaim your time from the mundane.*
+## *Built with 💜 by Apolonia — to reclaim your time from the mundane.*
