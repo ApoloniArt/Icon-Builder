@@ -9,12 +9,11 @@ Built for use with [ComfyUI](https://github.com/comfyanonymous/ComfyUI) but work
 ## What it does
 
 1. **Converts** PNG images into multi-resolution `.ico` files (8 sizes: 16–256px)
-2. ![Preview](screenshots/preview1.png)
-![Preview](screenshots/preview2.png)
-3. **Packages** all icons into a single `icon_library.dll` resource file
-4. ![Preview](screenshots/preview3.png)
-5. **Applies** icons to any Windows folder or shortcut via the desktop [fastest recommended] or command line
-6. ![Preview](screenshots/preview4.png)
+![Preview](screenshots/preview1.png) ![Preview](screenshots/preview2.png)
+2. **Packages** all icons into a single `icon_library.dll` resource file
+![Preview](screenshots/preview3.png)
+3. **Applies** icons to any Windows folder or shortcut via the desktop [fastest recommended] or command line
+![Preview](screenshots/preview4.png)
 
 The DLL is a standard Windows resource-only PE32+ binary — no C compiler required. It is built entirely in Python and is compatible with Windows' native **Change Icon** dialog, `LoadIcon()`, and all shell contexts.
 
