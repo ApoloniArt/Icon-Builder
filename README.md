@@ -165,7 +165,7 @@ pause
 IconTool/
     icon_tool.py        ← main script
     run.bat             ← one-click build (ComfyUI embedded Python)
-    images/             ← created automatically
+    images/             ← created manually
     your_image.png       
     another_image.png
     icons/              ← created automatically
@@ -311,7 +311,7 @@ icon = win32gui.LoadImage(dll, 1, win32con.IMAGE_ICON, 32, 32, 0)
 At the top of `icon_tool.py`:
 
 ```python
-PNG_FOLDER  = "."                 # folder containing your PNG source images
+PNG_FOLDER  = "images"            # folder containing your PNG source images
 ICON_FOLDER = "icons"             # where .ico files are saved
 DLL_PATH    = "icon_library.dll"  # output DLL path
 ```
