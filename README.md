@@ -165,8 +165,9 @@ pause
 IconTool/
     icon_tool.py        ← main script
     run.bat             ← one-click build (ComfyUI embedded Python)
-    your_icon.png       ← drop your PNG images here
-    another_icon.png
+    images/             ← created automatically
+    your_image.png       
+    another_image.png
     icons/              ← created automatically
         your_icon.ico
         another_icon.ico
