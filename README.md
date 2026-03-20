@@ -9,9 +9,9 @@ Built for use with [ComfyUI](https://github.com/comfyanonymous/ComfyUI) but work
 ## What it does
 
 1. **Converts** PNG images into multi-resolution `.ico` files (8 sizes: 16–256px)
-![Preview](screenshots/preview1.png) ![Preview](screenshots/preview2.png)
+![Preview](screenshots/preview1.jpg) ![Preview](screenshots/preview2.png)
 2. **Packages** all icons into a single `icon_library.dll` resource file
-![Preview](screenshots/preview3.png)
+![Preview](screenshots/preview3.jpg)
 3. **Applies** icons to any Windows folder or shortcut via the desktop [fastest recommended] or command line
 ![Preview](screenshots/preview4.png)
 
