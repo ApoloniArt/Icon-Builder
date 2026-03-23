@@ -9,8 +9,11 @@ Built for use with [ComfyUI](https://github.com/comfyanonymous/ComfyUI) but work
 ## What it does
 
 1. **Converts** PNG, WEBP, or JPG images into multi-resolution `.ico` files (8 sizes: 16–256px)
+![Preview](screenshots/preview1.jpg) ![Preview](screenshots/preview2.png)
 2. **Packages** all icons into a single `AiB_icon_library.dll` resource file
-3. **Applies** icons to any Windows folder or shortcut via the command line
+![Preview](screenshots/preview3.jpg)
+3. **Applies** icons to any Windows folder or shortcut via desktop [fastest recommended], or command line
+![Preview](screenshots/preview4.png)
 
 The DLL is a standard Windows resource-only PE32+ binary — no C compiler required. It is built entirely in Python and is compatible with Windows' native **Change Icon** dialog, `LoadIcon()`, and all shell contexts.
 
@@ -304,3 +307,6 @@ The `build` command runs on any Python 3.9+ with only Pillow installed. `pywin32
 ## License
 
 MIT
+
+---
+## *Built with 💜 by Apolonia — to reclaim your time from the mundane.*
