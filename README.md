@@ -268,7 +268,7 @@ icon = win32gui.LoadImage(dll, 1, win32con.IMAGE_ICON, 32, 32, 0)
 At the top of `icon_tool.py`:
 
 ```python
-PNG_FOLDER  = "input"                 # folder containing your source images
+PNG_FOLDER  = "images"                 # folder containing your source images
 ICON_FOLDER = "icons"                 # where .ico files are saved
 DLL_PATH    = "AiB_icon_library.dll"  # output DLL path
 ```
