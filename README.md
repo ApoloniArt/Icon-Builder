@@ -108,9 +108,9 @@ pause
 IconTool/
     icon_tool.py              ← main script
     run.bat                   ← one-click build
-    input/                    ← drop your source images here
-        your_icon.png
-        another_icon.webp
+    images/                    ← drop your source images here
+        your_image.png
+        another_image.webp
         something.jpg
     icons/                    ← created automatically
         your_icon.ico
