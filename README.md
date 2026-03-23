@@ -309,4 +309,4 @@ The `build` command runs on any Python 3.9+ with only Pillow installed. `pywin32
 MIT
 
 ---
-## *Built with 💜 by Apolonia & Hans💜 to reclaim your time from the mundane.*
+## *Built with 💜 by [Apolonia](https://github.com/ApoloniArt) & [Hans](https://github.com/hwprinz) to reclaim your time from the mundane.*
