@@ -21,7 +21,7 @@ import sys, os, struct, io, ctypes, glob
 # ──────────────────────────────────────────────
 # CONFIG — change these if needed
 # ──────────────────────────────────────────────
-PNG_FOLDER  = "input"                 # folder containing your ComfyUI PNG exports
+PNG_FOLDER  = "images"                 # folder containing your ComfyUI PNG exports
 ICON_FOLDER = "icons"             # where .ico files are saved (created automatically)
 DLL_PATH    = "AiB_icon_library.dll"  # your icon store (created automatically)
 ICO_SIZES   = [16, 24, 32, 48, 64, 128, 256]
