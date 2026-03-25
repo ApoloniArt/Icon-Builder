@@ -1,6 +1,6 @@
 [![PayPal Donate](screenshots/paypal.png)](https://www.paypal.com/donate/?hosted_button_id=MG5S4EPK6EUSL)
 # Icon Builder
-![Electron](https://img.shields.io/badge/Electron-28-47848F?logo=electron) ![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?logo=windows) ![License](https://img.shields.io/badge/License-MIT-green)
+![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?logo=windows) ![License](https://img.shields.io/badge/License-MIT-green)
 
 Convert AI-generated images into Windows desktop icons and store them in a `.dll` file — no compiler, no external tools, pure Python.
 
