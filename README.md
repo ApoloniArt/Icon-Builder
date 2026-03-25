@@ -306,9 +306,9 @@ The `build` command runs on any Python 3.9+ with only Pillow installed. `pywin32
 
 ---
 
-## License
+## 📄 Licence
 
-MIT
+MIT — free to use, modify and distribute.
 
 ---
 ## *Built with 💜 by [Apolonia](https://github.com/ApoloniArt) & [Hans](https://github.com/hwprinz) to reclaim your time from the mundane.*
