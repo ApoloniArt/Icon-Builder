@@ -307,7 +307,6 @@ The `build` command runs on any Python 3.9+ with only Pillow installed. `pywin32
 ---
 
 ## 📄 Licence
-
 MIT — free to use, modify and distribute.
 
 ---
