@@ -3,8 +3,7 @@
 
 <p align="center">
   <a href="https://github.com/comfyanonymous/ComfyUI"><img alt="ComfyUI extension" src="https://img.shields.io/badge/ComfyUI-Extension-5ea500?style=flat"></a>
-  <a href="https://github.com/ApoloniArt/Icon-Builder/releases"><img alt="Version" src="https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fapoloniart%2FApoStudio%2Fmain%2Fpyproject.toml&query=%24.project.version&label=Version&color=ed7d31&style=flat"></a>
-  <a href="https://github.com/ApoloniArt/Icon-Builder/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/apoloniart/Icon-Builder?label=License&color=e0414a&style=flat"></a>
+  <a href="https://github.com/ApoloniArt/Icon-Builder/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/ApoloniArt/Icon-Builder?label=License&color=e0414a&style=flat&cacheSeconds=3600"></a>
   <a href="https://github.com/ApoloniArt/Icon-Builder/blob/main/requirements.txt"><img alt="Dependencies" src="https://img.shields.io/badge/Dependencies-2-0075c2?style=flat"></a>
   <a href="https://github.com/ApoloniArt/Icon-Builder/commits"><img alt="Last update" src="https://img.shields.io/github/last-commit/apoloniart/Icon-Builder?label=Last%20Update&color=ed7d31&style=flat"></a>
   <a href="https://github.com/ApoloniArt/Icon-Builder/commits"><img alt="Activity" src="https://img.shields.io/github/commit-activity/m/apoloniart/Icon-Builder?label=Activity&color=d4b300&style=flat"></a>
