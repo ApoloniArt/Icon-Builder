@@ -13,10 +13,6 @@
   <a href="https://github.com/ApoloniArt"><img alt="Follow on GitHub" src="https://img.shields.io/github/followers/ApoloniArt?label=Follow&logo=github&color=555&style=flat"></a>
 </p>
 
-Convert AI-generated images into Windows desktop icons and store them in a `.dll` file — no compiler, no external tools, pure Python.
-
-Built for use with [ComfyUI](https://github.com/comfyanonymous/ComfyUI) but works with any image source.
-
 ---
 
 ## What it does
