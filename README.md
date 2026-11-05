@@ -316,6 +316,8 @@ The `build` command runs on any Python 3.9+ with only Pillow installed. `pywin32
 
 See [NOTICE](https://github.com/ApoloniArt/Icon-Builder/blob/main/NOTICE) for the full attribution request.
 
+---
+
 <div align="center">
 
 **Developed by [ApoloniArt ⚢🌈](https://github.com/ApoloniArt) & [HWPrinz](https://github.com/hwprinz)**
