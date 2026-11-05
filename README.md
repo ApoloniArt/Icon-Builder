@@ -311,11 +311,23 @@ The `build` command runs on any Python 3.9+ with only Pillow installed. `pywin32
 
 ---
 
-## 📄 Licence
-MIT — free to use, modify and distribute.
+## 🫱🏻‍🫲🏻 Attribution & Licenses
+**Icon Builder** is MIT licensed, see [LICENSE](https://github.com/ApoloniArt/Icon-Builder/blob/main/LICENSE). If you use it in a project, a mention of "Icon Builder by ApoloniArt" is very much appreciated 🤗 
+
+See [NOTICE](https://github.com/ApoloniArt/Icon-Builder/blob/main/NOTICE) for the full attribution request.
 
 ---
 ## *Built with 💜 by [Apolonia](https://github.com/ApoloniArt) & [Hans](https://github.com/hwprinz) to reclaim your time from the mundane.*
 
 ---
-#### If any of my little apps, tools, nodes or scripts have helped save you time or brought you joy, feel free to shower me with copious amounts of gifts 🤭 here: [PayPal Donation](https://www.paypal.com/donate/?hosted_button_id=MG5S4EPK6EUSL) or hit the button at the top☝️ Any support at all is hugely appreciated, even a star or nice comment🙏
+
+
+<div align="center">
+
+**Developed by [ApoloniArt ⚢🌈](https://github.com/ApoloniArt)**
+
+[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/XDExAUzuZp)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/apoloniart)
+
+</div>
+
