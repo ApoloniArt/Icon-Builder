@@ -13,8 +13,6 @@
   <a href="https://github.com/ApoloniArt"><img alt="Follow on GitHub" src="https://img.shields.io/github/followers/ApoloniArt?label=Follow&logo=github&color=555&style=flat"></a>
 </p>
 
----
-
 ## What it does
 
 1. **Converts** PNG, WEBP, or JPG images into multi-resolution `.ico` files (8 sizes: 16–256px)
