@@ -1,21 +1,9 @@
-ApoDesign
+Icon Builder
 Copyright (c) 2026 Apolonia (ApoloniArt)
 
 Licensed under the MIT License (see LICENSE).
 
-Attribution request (not a licence condition): if you use ApoDesign in a
+Attribution request (not a licence condition): if you use Icon Builder in a
 project, workflow, video or publication, a mention such as
-"ApoDesign by ApoloniArt" is appreciated.
+"Icon Builder by ApoloniArt" is appreciated.
 GitHub: https://github.com/ApoloniArt
-
-Third-party material bundled with ApoDesign
--------------------------------------------
-Bitcount Ink (web/fonts/BitcountInk-500.woff2, embedded in
-web/apodesign_font.js). Used for the node banner.
-  Copyright 2024 The Bitcount Project Authors
-  (https://github.com/petrvanblokland/TYPETR-Bitcount)
-  Licensed under the SIL Open Font License, Version 1.1
-  (web/fonts/OFL.txt, https://openfontlicense.org).
-
-DejaVu Sans Mono (fonts/DejaVuSansMono.ttf, DejaVuSansMono-Bold.ttf).
-  Bitstream Vera / DejaVu licence: see fonts/LICENSE_DEJAVU.txt.
