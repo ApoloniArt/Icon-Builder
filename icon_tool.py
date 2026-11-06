@@ -10,7 +10,7 @@ REQUIREMENTS (install once):
   pip install pillow pywin32
 
 USAGE:
-  python icon_tool.py build          # convert PNGs → .ico → .dll
+  python icon_tool.py build          # convert PNGs -> .ico -> .dll
   python icon_tool.py apply          # pick an icon, pick a folder/shortcut, done
   python icon_tool.py list           # show all icons stored in the dll
   python icon_tool.py clearcache     # force Windows to reload icon cache
@@ -28,7 +28,7 @@ ICO_SIZES   = [16, 24, 32, 48, 64, 128, 256]
 
 
 # ══════════════════════════════════════════════
-# STEP 1 — PNG → ICO  (multi-resolution)
+# STEP 1 — PNG -> ICO  (multi-resolution)
 # ══════════════════════════════════════════════
 
 def _make_bmp_dib(img: 'Image') -> bytes:
@@ -99,7 +99,7 @@ def png_to_ico(png_path: str, ico_path: str):
 
 
 # ══════════════════════════════════════════════
-# STEP 2 — ICOs → DLL  (pure Python, no compiler)
+# STEP 2 — ICOs -> DLL  (pure Python, no compiler)
 # ══════════════════════════════════════════════
 
 def _align(val: int, a: int) -> int:
@@ -134,7 +134,7 @@ def _build_version_info() -> bytes:
         0x00000000,   # dwFileDateLS
     )
 
-    # StringFileInfo → StringTable → individual strings
+    # StringFileInfo -> StringTable -> individual strings
     def _wstr(s: str) -> bytes:
         return s.encode('utf-16-le') + b'\x00\x00'
 
@@ -185,7 +185,7 @@ def _build_version_info() -> bytes:
     sfi += string_table
     sfi += b'\x00' * ((4 - len(sfi) % 4) % 4)
 
-    # VarFileInfo → Var (translation: English US / Unicode)
+    # VarFileInfo -> Var (translation: English US / Unicode)
     var_val = struct.pack('<HH', 0x0409, 0x04B0)
     var_key = _wstr("Translation")
     var_inner = 6 + len(var_key)
@@ -224,9 +224,11 @@ def _build_rsrc(rt_icon: list, rt_group: list, rsrc_rva: int) -> bytes:
     Build a Windows .rsrc section containing RT_ICON (type 3),
     RT_GROUP_ICON (type 14), and RT_VERSION (type 16) resource entries.
 
-    The VS_VERSIONINFO block (type 16) is required for full shell compatibility:
-    without it, Windows refuses to load the DLL as an icon source across network
-    paths and in certain local contexts on Windows 10.
+    Network/UNC compatibility requires resources to be stored with an explicit
+    language (1033 = en-US): the shell's remote icon loader queries resources by
+    exact language and will not match LANG_NEUTRAL (0) entries. The VS_VERSIONINFO
+    block (type 16) is included for full shell compatibility (file properties,
+    version queries) — it is good hygiene, not a network requirement.
 
     rsrc_rva: the virtual address where this section will be loaded.
               IMAGE_RESOURCE_DATA_ENTRY.OffsetToData must be an absolute VA,
@@ -235,7 +237,9 @@ def _build_rsrc(rt_icon: list, rt_group: list, rsrc_rva: int) -> bytes:
     RT_ICON       = 3
     RT_GROUP_ICON = 14
     RT_VERSION    = 16
-    LANG_NEUTRAL  = 0
+    LANG_EN_US    = 0x0409   # 1033 — the remote/MUI resource loader demands an
+                             # explicit language (LANG_NEUTRAL 0 is not matched
+                             # over UNC paths: icons show blank on network shares)
     HIGH_BIT      = 0x80000000
 
     nf = len(rt_icon)
@@ -288,13 +292,13 @@ def _build_rsrc(rt_icon: list, rt_group: list, rsrc_rva: int) -> bytes:
     wdir(3, [(RT_ICON, r3, True), (RT_GROUP_ICON, r14, True), (RT_VERSION, r16, True)])
     wdir(nf, [(fid, fn + i * fns, True) for i, (fid, _) in enumerate(rt_icon)])
     for i in range(nf):
-        wdir(1, [(LANG_NEUTRAL, de + i * des, False)])
+        wdir(1, [(LANG_EN_US, de + i * des, False)])
     wdir(ng, [(gid, gn + i * gns, True) for i, (gid, _) in enumerate(rt_group)])
     for i in range(ng):
-        wdir(1, [(LANG_NEUTRAL, de + (nf + i) * des, False)])
+        wdir(1, [(LANG_EN_US, de + (nf + i) * des, False)])
     # RT_VERSION: id=1, single language entry
     wdir(1, [(1, vn, True)])
-    wdir(1, [(LANG_NEUTRAL, de + (nf + ng) * des, False)])
+    wdir(1, [(LANG_EN_US, de + (nf + ng) * des, False)])
 
     while len(buf) < de: buf.append(0)
     for rva, sz in fo: buf.extend(struct.pack('<IIII', rva, sz, 0, 0))
@@ -309,7 +313,7 @@ def _build_pe(ico_payloads: list) -> bytes:
     """Minimal resource-only PE32+ DLL — no C compiler required."""
     FILE_ALIGN = 0x200
     SEC_ALIGN  = 0x1000
-    IMAGE_BASE = 0x10000000
+    IMAGE_BASE = 0x180000000   # same preferred base link.exe uses for 64-bit DLLs
 
     # Parse each .ico into frames
     all_frames  = []
@@ -363,14 +367,14 @@ def _build_pe(ico_payloads: list) -> bytes:
 
     # PE32+ optional header — exactly 29 fields, 112 bytes
     opt_hdr = struct.pack('<HBBIIIIIQIIHHHHHHIIIIHHQQQQII',
-        0x20B, 0, 0,
+        0x20B, 14, 29,
         0, len(rsrc_pad), 0,
         0, 0,
         IMAGE_BASE,
         SEC_ALIGN, FILE_ALIGN,
         6, 0, 0, 0, 6, 0, 0,
         img_sz, hdr_sz, 0,
-        2, 0x540,
+        2, 0x160,
         0x100000, 0x1000,
         0x100000, 0x1000,
         0, 16,
@@ -499,7 +503,7 @@ def apply_icon_to_shortcut(lnk_path: str, icon_id: int):
         ctypes.c_wchar_p(lnk_abs), None)
 
     print(f"  ✓ Applied icon [{icon_id}] to shortcut: {lnk_path}")
-    print("    Right-click desktop → Refresh, or press F5 in Explorer.")
+    print("    Right-click desktop -> Refresh, or press F5 in Explorer.")
 
 
 # ══════════════════════════════════════════════
@@ -526,7 +530,7 @@ def cmd_build():
     ))
 
     if images:
-        print(f"\nConverting {len(images)} image(s) → .ico ...")
+        print(f"\nConverting {len(images)} image(s) -> .ico ...")
         for p in images:
             name     = os.path.splitext(os.path.basename(p))[0]
             ico_path = os.path.join(ICON_FOLDER, name + ".ico")
