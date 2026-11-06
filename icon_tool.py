@@ -106,10 +106,127 @@ def _align(val: int, a: int) -> int:
     return (val + a - 1) & ~(a - 1)
 
 
+def _build_version_info() -> bytes:
+    """
+    Build a minimal but fully valid VS_VERSIONINFO resource block (RT_VERSION).
+    This is required for full Windows shell compatibility — without it the shell
+    refuses to load the DLL as an icon source across network paths and in some
+    local contexts (Resource Hacker, Change Icon dialog on Win10, etc.).
+    """
+    def _pad32(data: bytes) -> bytes:
+        r = len(data) % 4
+        return data + b'\x00' * ((4 - r) % 4)
+
+    # VS_FIXEDFILEINFO — 52 bytes
+    ffi = struct.pack('<IIIIIIIIIIIIi',
+        0xFEEF04BD,   # dwSignature
+        0x00010000,   # dwStrucVersion
+        0x00010000,   # dwFileVersionMS  (1.0)
+        0x00000000,   # dwFileVersionLS
+        0x00010000,   # dwProductVersionMS
+        0x00000000,   # dwProductVersionLS
+        0x3F,         # dwFileFlagsMask
+        0x00,         # dwFileFlags
+        0x00040004,   # dwFileOS (VOS_NT_WINDOWS32)
+        0x00000002,   # dwFileType (VFT_DLL)
+        0x00000000,   # dwFileSubtype
+        0x00000000,   # dwFileDateMS
+        0x00000000,   # dwFileDateLS
+    )
+
+    # StringFileInfo → StringTable → individual strings
+    def _wstr(s: str) -> bytes:
+        return s.encode('utf-16-le') + b'\x00\x00'
+
+    def _str_entry(key: str, value: str) -> bytes:
+        # WORD wLength, WORD wValueLength, WORD wType=1, key (NUL-term wide), pad, value
+        k = _wstr(key)
+        v = _wstr(value)
+        hdr_len = 6 + len(k)
+        hdr_len_padded = (hdr_len + 3) & ~3
+        pad = b'\x00' * (hdr_len_padded - hdr_len)
+        total = hdr_len_padded + len(v)
+        total = (total + 3) & ~3
+        entry = struct.pack('<HHH', total, len(value) + 1, 1) + k + pad + v
+        entry += b'\x00' * ((4 - len(entry) % 4) % 4)
+        return entry
+
+    strings = [
+        ("CompanyName",      "IconTool"),
+        ("FileDescription",  "Icon Library"),
+        ("FileVersion",      "1.0.0.0"),
+        ("InternalName",     "AiB_icon_library"),
+        ("LegalCopyright",   "MIT License"),
+        ("OriginalFilename", "AiB_icon_library.dll"),
+        ("ProductName",      "IconTool"),
+        ("ProductVersion",   "1.0.0.0"),
+    ]
+    str_entries = b''.join(_str_entry(k, v) for k, v in strings)
+
+    # StringTable — lang/codepage key "040904B0" = English (US) / Unicode
+    st_key   = _wstr("040904B0")
+    st_inner = 6 + len(st_key)
+    st_inner = (st_inner + 3) & ~3
+    st_total = st_inner + len(str_entries)
+    st_total = (st_total + 3) & ~3
+    string_table  = struct.pack('<HHH', st_total, 0, 1) + st_key
+    string_table += b'\x00' * (st_inner - 6 - len(st_key))
+    string_table += str_entries
+    string_table += b'\x00' * ((4 - len(string_table) % 4) % 4)
+
+    # StringFileInfo
+    sfi_key   = _wstr("StringFileInfo")
+    sfi_inner = 6 + len(sfi_key)
+    sfi_inner = (sfi_inner + 3) & ~3
+    sfi_total = sfi_inner + len(string_table)
+    sfi_total = (sfi_total + 3) & ~3
+    sfi  = struct.pack('<HHH', sfi_total, 0, 1) + sfi_key
+    sfi += b'\x00' * (sfi_inner - 6 - len(sfi_key))
+    sfi += string_table
+    sfi += b'\x00' * ((4 - len(sfi) % 4) % 4)
+
+    # VarFileInfo → Var (translation: English US / Unicode)
+    var_val = struct.pack('<HH', 0x0409, 0x04B0)
+    var_key = _wstr("Translation")
+    var_inner = 6 + len(var_key)
+    var_inner = (var_inner + 3) & ~3
+    var_total = var_inner + len(var_val)
+    var  = struct.pack('<HHH', var_total, len(var_val), 0) + var_key
+    var += b'\x00' * (var_inner - 6 - len(var_key))
+    var += var_val
+
+    vfi_key   = _wstr("VarFileInfo")
+    vfi_inner = 6 + len(vfi_key)
+    vfi_inner = (vfi_inner + 3) & ~3
+    vfi_total = vfi_inner + len(var)
+    vfi_total = (vfi_total + 3) & ~3
+    vfi  = struct.pack('<HHH', vfi_total, 0, 1) + vfi_key
+    vfi += b'\x00' * (vfi_inner - 6 - len(vfi_key))
+    vfi += var
+    vfi += b'\x00' * ((4 - len(vfi) % 4) % 4)
+
+    # VS_VERSIONINFO root
+    vs_key    = _wstr("VS_VERSION_INFO")
+    vs_inner  = 6 + len(vs_key)
+    vs_inner  = (vs_inner + 3) & ~3
+    children  = sfi + vfi
+    vs_total  = vs_inner + len(ffi) + len(children)
+    vs_total  = (vs_total + 3) & ~3
+    root  = struct.pack('<HHH', vs_total, len(ffi), 0) + vs_key
+    root += b'\x00' * (vs_inner - 6 - len(vs_key))
+    root += ffi + children
+    root += b'\x00' * ((4 - len(root) % 4) % 4)
+    return root
+
+
 def _build_rsrc(rt_icon: list, rt_group: list, rsrc_rva: int) -> bytes:
     """
-    Build a Windows .rsrc section containing RT_ICON (type 3) and
-    RT_GROUP_ICON (type 14) resource entries.
+    Build a Windows .rsrc section containing RT_ICON (type 3),
+    RT_GROUP_ICON (type 14), and RT_VERSION (type 16) resource entries.
+
+    The VS_VERSIONINFO block (type 16) is required for full shell compatibility:
+    without it, Windows refuses to load the DLL as an icon source across network
+    paths and in certain local contexts on Windows 10.
 
     rsrc_rva: the virtual address where this section will be loaded.
               IMAGE_RESOURCE_DATA_ENTRY.OffsetToData must be an absolute VA,
@@ -117,60 +234,72 @@ def _build_rsrc(rt_icon: list, rt_group: list, rsrc_rva: int) -> bytes:
     """
     RT_ICON       = 3
     RT_GROUP_ICON = 14
+    RT_VERSION    = 16
     LANG_NEUTRAL  = 0
     HIGH_BIT      = 0x80000000
 
     nf = len(rt_icon)
     ng = len(rt_group)
+    version_data = _build_version_info()
 
     def dir_sz(n_id: int) -> int:
         return 16 + n_id * 8
 
-    # Calculate all directory offsets (all relative to start of rsrc blob)
-    r3   = dir_sz(2);          r3s  = dir_sz(nf)
+    # Root directory has 3 type entries: RT_ICON, RT_GROUP_ICON, RT_VERSION
+    r3   = dir_sz(3);          r3s  = dir_sz(nf)
     fn   = r3 + r3s;           fns  = dir_sz(1)
     r14  = fn + nf * fns;      r14s = dir_sz(ng)
     gn   = r14 + r14s;         gns  = dir_sz(1)
-    de   = gn + ng * gns;      des  = 16
-    rd   = _align(de + (nf + ng) * des, 4)
+    r16  = gn + ng * gns;      r16s = dir_sz(1)   # RT_VERSION: 1 entry (id=1)
+    vn   = r16 + r16s;         vns  = dir_sz(1)   # version lang dir
+    de   = vn + vns;           des  = 16
+    rd   = _align(de + (nf + ng + 1) * des, 4)
 
-    # Accumulate raw data, recording absolute VAs for each entry
+    # Accumulate raw data
     raw = bytearray()
     fo  = []
     go  = []
 
     for _, data in rt_icon:
-        fo.append((rsrc_rva + rd + len(raw), len(data)))  # absolute VA
+        fo.append((rsrc_rva + rd + len(raw), len(data)))
         raw += data
         pad = _align(len(raw), 4) - len(raw)
         if pad: raw += b'\x00' * pad
 
     for _, data in rt_group:
-        go.append((rsrc_rva + rd + len(raw), len(data)))  # absolute VA
+        go.append((rsrc_rva + rd + len(raw), len(data)))
         raw += data
         pad = _align(len(raw), 4) - len(raw)
         if pad: raw += b'\x00' * pad
 
+    # RT_VERSION data entry
+    vo = (rsrc_rva + rd + len(raw), len(version_data))
+    raw += version_data
+    pad = _align(len(raw), 4) - len(raw)
+    if pad: raw += b'\x00' * pad
+
     buf = bytearray()
 
     def wdir(n_id: int, entries: list):
-        # IMAGE_RESOURCE_DIRECTORY: Characteristics, TimeDateStamp, MajVer, MinVer,
-        # NumberOfNamedEntries, NumberOfIdEntries  (16 bytes total)
         buf.extend(struct.pack('<IIHHHH', 0, 0, 0, 0, 0, n_id))
         for eid, child, is_dir in entries:
             buf.extend(struct.pack('<II', eid, child | (HIGH_BIT if is_dir else 0)))
 
-    wdir(2, [(RT_ICON, r3, True), (RT_GROUP_ICON, r14, True)])
+    wdir(3, [(RT_ICON, r3, True), (RT_GROUP_ICON, r14, True), (RT_VERSION, r16, True)])
     wdir(nf, [(fid, fn + i * fns, True) for i, (fid, _) in enumerate(rt_icon)])
     for i in range(nf):
         wdir(1, [(LANG_NEUTRAL, de + i * des, False)])
     wdir(ng, [(gid, gn + i * gns, True) for i, (gid, _) in enumerate(rt_group)])
     for i in range(ng):
         wdir(1, [(LANG_NEUTRAL, de + (nf + i) * des, False)])
+    # RT_VERSION: id=1, single language entry
+    wdir(1, [(1, vn, True)])
+    wdir(1, [(LANG_NEUTRAL, de + (nf + ng) * des, False)])
 
     while len(buf) < de: buf.append(0)
     for rva, sz in fo: buf.extend(struct.pack('<IIII', rva, sz, 0, 0))
     for rva, sz in go: buf.extend(struct.pack('<IIII', rva, sz, 0, 0))
+    buf.extend(struct.pack('<IIII', vo[0], vo[1], 0, 0))  # version data entry
     while len(buf) < rd: buf.append(0)
     buf.extend(raw)
     return bytes(buf)
